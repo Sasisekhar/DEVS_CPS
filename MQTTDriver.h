@@ -12,6 +12,12 @@
 #include <cstring>
 
 class MQTTDriver{
+    private:
+        MQTTclient _client;
     public:
-    bool init(MQTTclient*);
+    bool init();
+    bool publish(const char*, char*);
+    bool receive_response(char*, char*);
+    bool subscribe(char*);
+    bool ping();
 };

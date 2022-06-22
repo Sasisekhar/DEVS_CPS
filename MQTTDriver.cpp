@@ -1,58 +1,49 @@
 #include "MQTTDriver.h"
+// main() runs in its own thread in the OS
 
-MQTTDriver::MQTTDriver( PinName             Tx,
-                        PinName             Rx,
-                        char*               SSID,
-                        char*               PSWD,
-                        nsapi_security      security,
-                        char*               Broker,
-                        int                 Port,
-                        char*               ClientID,
-                        char*               Username,
-                        char*               Pwd) {
+bool MQTTDriver::init(MQTTclient* CLIENT) {
 
-    ESP8266Interface ESPclient(Tx, Rx);    
-    _ESPclient = &ESPclient;
+    ESP8266Interface WiFi(D1, D0);
 
-    _ESPclient->set_credentials(SSID, PSWD, security);
+    WiFi.set_credentials((const char*)"Sx3K", (const char*)"golikuttan7577", NSAPI_SECURITY_WPA_WPA2);
+    // WiFi.set_credentials((const char*)"ARS-LAB", (const char*)"3928DC6C25", NSAPI_SECURITY_WEP);
 
-    _ESPclient->connect();
-
+    WiFi.connect();
     printf("Connecting");
-
-    while(_ESPclient->get_connection_status() == NSAPI_STATUS_CONNECTING){
+    while(WiFi.get_connection_status() == NSAPI_STATUS_CONNECTING){
         printf(".");
         ThisThread::sleep_for(500ms);
     }
 
-    if(_ESPclient->get_connection_status() == NSAPI_STATUS_GLOBAL_UP) {
+    if(WiFi.get_connection_status() == NSAPI_STATUS_GLOBAL_UP) {
         printf("\r\nConnected!\r\n");
     }
 
     SocketAddress address;
-    _ESPclient->gethostbyname(Broker, &address);
-    address.set_port(Port);
+    WiFi.gethostbyname("broker.hivemq.com", &address);
+    // address.set_ip_address("134.117.52.253\0");  //My laptop
+    // address.set_ip_address("134.117.52.231\0");     //My workstation
+    address.set_port(1883);
 
-    _MQTTclient.initializeClass(_ESPclient, address);
+    MQTTclient client(&WiFi, address);
 
-    if(_MQTTclient.connect(ClientID, Username, Pwd)) {
+    if(client.connect("ARSLAB")) {
         printf("Connection Successful\n");
     }
 
-}
+    if(client.subscribe("ARSLAB/Control/AC")) {
+        printf("Subscription successful\n");
+    }
 
-bool MQTTDriver::publish(char* topic, char* payload) {
-    return _MQTTclient.publish(topic, payload);
-}
+    if(client.subscribe("ARSLAB/Control/Door")) {
+        printf("Subscription successful\n");
+    }
 
-bool MQTTDriver::subscribe(char* topic) {
-    return _MQTTclient.subscribe(topic);
-}
+    if(client.subscribe("ARSLAB/Control/Light")) {
+        printf("Subscription successful\n");
+    }
 
-bool MQTTDriver::receive_response(char* topic, char* message){
-    return _MQTTclient.receive_response(topic, message);
-}
+    CLIENT = &client;
 
-MQTTDriver::~MQTTDriver(){
-    _ESPclient->disconnect();
+    return true;
 }

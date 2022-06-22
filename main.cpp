@@ -1,6 +1,4 @@
-#include "mbed.h"
 #include "MQTTDriver.h"
-// main() runs in its own thread in the OS
 
 namespace arduino{
     uint64_t millis() {
@@ -8,21 +6,19 @@ namespace arduino{
     }
 }
 
-ESP8266Interface WiFi(D1, D0);
-MQTTclient client;
+DigitalOut led1(D12);
+DigitalOut led2(D13);
+DigitalIn button(BUTTON1);
 
 int main() {
+    led1 = false;
+    led2 = false;
 
-    MQTTDriver client(  D1,
-                        D0,
-                        (char*) "Sx3K",
-                        (char*) "golikuttan7577",
-                        NSAPI_SECURITY_WPA_WPA2,
-                        (char*) "broker.hivemq.com",
-                        1883,
-                        (char*) "ARSLAB",
-                        NULL,
-                        NULL );
+    MQTTDriver driver;
+    MQTTclient *client;
+    driver.init(client);
+
+
 
     uint64_t startTime = 0;
     char topic[128];
@@ -39,16 +35,35 @@ int main() {
 
             sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO2\":%d}", temp, hum, co2);
 
-            client.publish((char*) "ARSLAB/Data/Raw", buff);
+            client->publish("ARSLAB/Data/Raw", buff);
             startTime = arduino::millis();
         }
 
-        if(client.receive_response(topic, message)) {
-            printf("Message: %s received on topic: %s\n", message, topic);
+        if(client->receive_response(topic, message)) {
+            //printf("Message: %s received on topic: %s\n", message, topic);
+
+            if(!strcmp(topic, (char*) "ARSLAB/Control/Door")) {
+                if(!strcmp(message, (char*) "1")) {
+                    led1 = true;
+                } else {
+                    led1 = false;
+                }
+            } else if (!strcmp(topic, (char*) "ARSLAB/Control/Light")) {
+                if(!strcmp(message, (char*) "1")) {
+                    led2 = true;
+                } else {
+                    led2 = false;
+                }
+            }
+        }
+
+        if(!button) {
+            client->ping();
+            ThisThread::sleep_for(500ms);
+            if(!button){
+                break;
+            }
         }
     }
-
-    WiFi.disconnect();
-
     return 0;
 }

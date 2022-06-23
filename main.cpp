@@ -76,9 +76,9 @@ int main() {
         }
     }
 
-    printf("Done\r\n");
 
     client.disconnect();
 
+    printf("Done\r\n");
     return 0;
 }

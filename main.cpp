@@ -50,6 +50,7 @@ int main() {
     }
 
     client.disconnect();
+    printf("Done!\r\n");
 
     return 0;
 }

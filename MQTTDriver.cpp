@@ -30,10 +30,10 @@ bool MQTTDriver::init() {
     }
 
     SocketAddress address;
-    global::_ESPclient.gethostbyname("broker.hivemq.com", &address);
+    // global::_ESPclient.gethostbyname("broker.hivemq.com", &address);
     // global::_ESPclient.gethostbyname("mqtt.flespi.io", &address);
     // address.set_ip_address("134.117.52.253\0");  //My laptop
-    // address.set_ip_address("192.168.137.1\0");  //My laptop
+    address.set_ip_address("172.17.23.254\0");  //My laptop
     // address.set_ip_address("134.117.52.231\0");     //My workstation
     address.set_port(1883);
 

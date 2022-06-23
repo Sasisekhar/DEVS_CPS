@@ -16,8 +16,10 @@ class MQTTDriver{
         MQTTclient _client;
     public:
     bool init();
+    bool connect(const char*);
     bool publish(const char*, char*);
     bool receive_response(char*, char*);
-    bool subscribe(char*);
+    bool subscribe(const char*);
     bool ping();
+    void disconnect();
 };

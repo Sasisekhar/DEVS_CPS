@@ -64,7 +64,7 @@ bool MQTTclient::connect( const char* clientID, const char* username, const char
         if(!MQTTinit()) {
             printf("TCP socket initialization failed!\n");
         }
-        printf("Connecting...");
+        
         uint8_t CONNECTFLAG = 0;
 
         if(username) {
@@ -353,7 +353,7 @@ uint32_t MQTTclient::ping() {
     _socket.send(buffer, 2);
 
     int time = us_ticker_read()/1000;
-    while((buffer[0] != MQTTPINGRESP) && (us_ticker_read()/1000 - time) <= 10000){
+    while((buffer[0] != MQTTPINGRESP) && (us_ticker_read()/1000 - time) <= 3000){
         _result = this->_socket.recv(buffer, 2);
     }
 

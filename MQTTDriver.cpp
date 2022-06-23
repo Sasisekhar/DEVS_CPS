@@ -63,6 +63,5 @@ bool MQTTDriver::ping() {
 }
 
 void MQTTDriver::disconnect() {
-    _client.~MQTTclient();
     global::_ESPclient.disconnect();
 }

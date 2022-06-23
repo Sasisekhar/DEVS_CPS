@@ -13,15 +13,13 @@ int main() {
     MQTTDriver client;
     client.init();
 
-    client.connect("ARSLAB_4S5IIOT01_1");
+    client.connect("ARSLAB");
 
     client.subscribe("ARSLAB/Control/AC");
 
     client.subscribe("ARSLAB/Control/Door");
 
     client.subscribe("ARSLAB/Control/Light");
-
-    client.subscribe("ARSLAB/ping/resp");
 
     for(int i = 0; i < 4; i++) {
         led1 = true;
@@ -36,7 +34,6 @@ int main() {
     uint64_t startTime = 0;
     char topic[128];
     char message[128];
-    bool currState;
 
     while (true) {
 
@@ -66,49 +63,14 @@ int main() {
                 } else {
                     led2 = false;
                 }
-            } else if(!strcmp(topic, (char*) "ARSLAB/ping/resp")) {
-                if(!strcmp(message, (char*) "1")) {
-                    led1 = true;
-                    led2 = true;
-                } else if (!strcmp(message, (char*) "0")){
-                    led1 = false;
-                    led2 = false;
-                }
-            } 
+            }
         }
 
         if(!button) {
-            if(!currState) {
-                client.publish("ARSLAB/ping/req",(char*) "1");
-
-                currState = true;
-            }
-
-            while (true) {
-                if(client.receive_response(topic, message)) {
-                    if(!strcmp(topic, (char*) "ARSLAB/ping/resp")) {
-                        if(!strcmp(message, (char*) "1")) {
-                            led1 = true;
-                            led2 = true;
-                        } else if (!strcmp(message, (char*) "0")){
-                            led1 = false;
-                            led2 = false;
-                        }
-                    }
-
-                    break;
-                }
-            }
-
-            //client.ping();
+            client.ping();
             ThisThread::sleep_for(1000ms);
             if(!button){
                 break;
-            }
-        } else {
-            if(currState) {
-                client.publish("ARSLAB/ping/req",(char*) "0");
-                currState = false;
             }
         }
     }

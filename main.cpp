@@ -1,5 +1,4 @@
 #include "MQTTDriver.h"
-#include "ThisThread.h"
 // main() runs in its own thread in the OS
 
 DigitalOut led1(D13);

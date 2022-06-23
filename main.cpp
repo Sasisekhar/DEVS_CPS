@@ -13,7 +13,7 @@ int main() {
     MQTTDriver client;
     client.init();
 
-    client.connect("ARSLAB");
+    client.connect("ARSLAB_4S5IIOT01_1");
 
     client.subscribe("ARSLAB/Control/AC");
 
@@ -40,18 +40,18 @@ int main() {
 
     while (true) {
 
-        // if((us_ticker_read()/1000) -  startTime > 30000) {
-        //     int temp = rand()%50;
-        //     int hum = rand()%100;
-        //     int co2 = rand()%5000;
+        if((us_ticker_read()/1000) -  startTime > 30000) {
+            int temp = rand()%50;
+            int hum = rand()%100;
+            int co2 = rand()%5000;
 
-        //     char buff[128];
+            char buff[128];
 
-        //     sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO2\":%d}", temp, hum, co2);
+            sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO2\":%d}", temp, hum, co2);
 
-        //     client.publish("ARSLAB/Data/Raw", buff);
-        //     startTime = us_ticker_read()/1000;
-        // }
+            client.publish("ARSLAB/Data/Raw", buff);
+            startTime = us_ticker_read()/1000;
+        }
 
         if(client.receive_response(topic, message)) {
             if(!strcmp(topic, (char*) "ARSLAB/Control/Door")) {
@@ -80,6 +80,7 @@ int main() {
         if(!button) {
             if(!currState) {
                 client.publish("ARSLAB/ping/req",(char*) "1");
+
                 currState = true;
             }
 
@@ -111,6 +112,8 @@ int main() {
             }
         }
     }
+
+    printf("Done\r\n");
 
     client.disconnect();
 

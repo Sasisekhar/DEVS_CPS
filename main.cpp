@@ -44,7 +44,7 @@ int main() {
             } 
         }
 
-        if(!button) {
+        if(button) {
             break;
         }
     }

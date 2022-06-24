@@ -45,9 +45,8 @@ int main() {
             } 
         }
 
-        trig = button;
         if(!button) {
-
+            trig = true;
             if(!currState) {
                 client.publish("ARSLAB/ping/req",(char*) "1");
                 currState = true;
@@ -73,6 +72,7 @@ int main() {
                 break;
             }
         } else {
+            trig = false;
             if(currState) {
                 client.publish("ARSLAB/ping/req",(char*) "0");
                 currState = false;

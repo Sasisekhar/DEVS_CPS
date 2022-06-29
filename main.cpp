@@ -32,34 +32,21 @@ int main() {
             startTime = us_ticker_read()/1000;
         }
 
-        // if(client.receive_response(topic, message)) {
-        //     if(!strcmp(topic, (char*) "ARSLAB/ping/resp")) {
-        //         if(!strcmp(message, (char*) "1")) {
-        //             led1 = true;
-        //         } else if (!strcmp(message, (char*) "0")){
-        //             led1 = false;
-        //         }
-        //     } 
-        // }
+        if(client.receive_response(topic, message)) {
+            if(!strcmp(topic, (char*) "ARSLAB/ping/resp")) {
+                if(!strcmp(message, (char*) "1")) {
+                    led1 = true;
+                } else if (!strcmp(message, (char*) "0")){
+                    led1 = false;
+                }
+            } 
+        }
 
         if(!button) {
             if(!currState) {
                 client.publish("ARSLAB/ping/req",(char*) "1");
+                startTime = us_ticker_read()/1000;
                 currState = true;
-            }
-
-            while (true) {
-                if(client.receive_response(topic, message)) {
-                    if(!strcmp(topic, (char*) "ARSLAB/ping/resp")) {
-                        if(!strcmp(message, (char*) "1")) {
-                            led1 = true;
-                        } else if (!strcmp(message, (char*) "0")){
-                            led1 = false;
-                        }
-                    }
-
-                    break;
-                }
             }
 
             //client.ping();
@@ -70,6 +57,7 @@ int main() {
         } else {
             if(currState) {
                 client.publish("ARSLAB/ping/req",(char*) "0");
+                startTime = us_ticker_read()/1000;
                 currState = false;
             }
         }

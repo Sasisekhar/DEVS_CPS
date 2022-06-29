@@ -3,6 +3,7 @@
 
 DigitalOut led1(D13);
 DigitalIn button(BUTTON1);
+DigitalOut trig(D12);
 
 int main() {
     led1 = false;
@@ -10,6 +11,7 @@ int main() {
     MQTTDriver client;
     client.init();
     client.connect("ARSLAB_4S5IIOT01");
+    
     client.subscribe("ARSLAB/ping/resp");
 
     for(int i = 0; i < 4; i++) {
@@ -43,6 +45,7 @@ int main() {
         }
 
         if(!button) {
+            trig = true;
             if(!currState) {
                 client.publish("ARSLAB/ping/req",(char*) "1");
                 startTime = us_ticker_read()/1000;
@@ -55,6 +58,7 @@ int main() {
                 break;
             }
         } else {
+            trig = false;
             if(currState) {
                 client.publish("ARSLAB/ping/req",(char*) "0");
                 startTime = us_ticker_read()/1000;

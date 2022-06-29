@@ -1,6 +1,4 @@
 #include "MQTTDriver.h"
-#include "ThisThread.h"
-#include "us_ticker_api.h"
 // main() runs in its own thread in the OS
 
 DigitalOut led1(D13);
@@ -50,6 +48,7 @@ int main() {
     }
 
     client.disconnect();
+    printf("Done!\r\n");
 
     return 0;
 }

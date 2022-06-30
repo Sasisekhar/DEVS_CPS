@@ -79,6 +79,7 @@ int main() {
                 }
 
                 hum /= 3;
+                printf("Hum: %d\r\n", hum);
                 
             } else if(!strcmp(topic, (char*) "ARSLAB/Data/CO")) {
 

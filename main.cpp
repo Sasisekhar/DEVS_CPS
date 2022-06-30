@@ -35,7 +35,7 @@ int main() {
 
     while (true) {
 
-        if((us_ticker_read()/1000) -  startTime > 500) {
+        if((us_ticker_read()/1000) -  startTime > 1000) {
             char buff[256];
 
             sprintf(buff, "{\"Temp\":[%d, %d, %d], \"Hum\":[%d, %d, %d], \"CO\":[%d, %d, %d]}", rand()%50, rand()%50, rand()%50, rand()%100, rand()%100, rand()%100, rand()%200, rand()%200, rand()%200);

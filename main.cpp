@@ -11,7 +11,7 @@ int main() {
     MQTTDriver client;
     client.init();
     printf("Connecting to the broker...\n\r");
-    if(client.connect("ARSLAB_Processor")) {
+    if(client.connect("ARSLAB_DAQ")) {
         printf("Connected!\n\r");
     }
 

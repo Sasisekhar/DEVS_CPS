@@ -110,15 +110,13 @@ int main() {
             }
 
             sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO\":%d}", temp, hum, co);
-
-            client.publish("ARSLAB/Data/Fused", buff);
-
         }
 
         if((us_ticker_read()/1000) - startTime > 1000) {
-            client.publish("ARSLAB/Data/Fused", buff);;
+            client.publish("ARSLAB/Data/Fused", buff);
             startTime = us_ticker_read()/1000;
         }
+        
         if(button) {
             break;
         }

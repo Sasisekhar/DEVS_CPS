@@ -126,6 +126,7 @@ bool MQTTclient::connect( const char* clientID, const char* username, const char
         }
         
         _result = _socket.send(buffer, bytes_to_send);
+        timeOut = us_ticker_read()/1000;
         if(_result < 0) {
             printf("Send failed! Error: %d", _result);
         } else {
@@ -262,6 +263,7 @@ bool MQTTclient::publish(const char* topic, const char* message) {
         // printf("Size of packet is: %d\n", bytes_to_send);
 
         _result = _socket.send(buffer, bytes_to_send);
+        timeOut = us_ticker_read()/1000;
 
         if(_result < 0) {
             printf("Publish failed! Error: %d", _result);
@@ -311,6 +313,7 @@ bool MQTTclient::subscribe(const char* topic) {
     // printf("Size of packet is: %d\n", bytes_to_send);
 
     _result = _socket.send(buffer, bytes_to_send);
+    timeOut = us_ticker_read()/1000;
     if(_result < 0) {
         printf("Subscription unsuccessful! Error: %d\n", _result);;
         return false;
@@ -335,6 +338,7 @@ bool MQTTclient::disconnect() {
     // printf("Size of packet is: %d\n", bytes_to_send);
 
     _result = _socket.send(buffer, bytes_to_send);
+    timeOut = us_ticker_read()/1000;
     if(_result < 0) {
         printf("Broker Disconnect unsuccessful! Error:%d\n", _result);
     }
@@ -351,6 +355,7 @@ bool MQTTclient::disconnect() {
 uint32_t MQTTclient::ping() {
     uint8_t buffer[] = {0xC0, 0x00};
     _socket.send(buffer, 2);
+    timeOut = us_ticker_read()/1000;
 
     int time = us_ticker_read()/1000;
     while((buffer[0] != MQTTPINGRESP) && (us_ticker_read()/1000 - time) <= 3000){
@@ -364,4 +369,8 @@ uint32_t MQTTclient::ping() {
 
 MQTTclient::~MQTTclient() {
     disconnect();
+}
+
+uint32_t MQTTclient::lastActivity() {
+    return timeOut;
 }

@@ -9,6 +9,7 @@
 #include "mbed.h"
 #include "ESP8266Interface.h"
 #include "MQTT.h"
+#include <cstdint>
 #include <cstring>
 
 class MQTTDriver{
@@ -22,4 +23,5 @@ class MQTTDriver{
     bool subscribe(const char*);
     bool ping();
     void disconnect();
+    uint32_t lastActivity();
 };

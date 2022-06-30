@@ -1,4 +1,5 @@
 #include "MQTTDriver.h"
+#include <cstring>
 #include <string>
 // main() runs in its own thread in the OS
 
@@ -25,7 +26,7 @@ int main() {
         printf("Subscription Successful!\n\r");
     }
 
-    if(client.subscribe("ARSLAB/Data/CO2")) {
+    if(client.subscribe("ARSLAB/Data/CO")) {
         printf("Subscription Successful!\n\r");
     }
 
@@ -39,58 +40,66 @@ int main() {
 
     uint64_t startTime = 0;
     char topic[128];
-    string message;
+    char message[128];
 
     int temp, hum, co;
 
     while (true) {
 
-        if((us_ticker_read()/1000) -  startTime > 30000) {
+        if((us_ticker_read()/1000) - client.lastActivity() > 30000) {
             client.ping();
-            startTime = us_ticker_read()/1000;
         }
 
-        if(client.receive_response(topic,(char*) message.c_str())) {
+        if(client.receive_response(topic, message)) {
+
             if(!strcmp(topic, (char*) "ARSLAB/Data/Temp")) {
-                string tmp = " ";
+                string tmp = "";
                 temp = 0;
 
-                for(int i = 0; i < message.length(); i++) {
+                // printf("%d\r\n", strlen(message));
+
+                for(int i = 0; i < strlen(message); i++) {
+                    // printf("%s\r\n", tmp.c_str());
                     if(message[i] != ',') {
                         tmp += message[i];
                     } else if(message[i] == ',') {
                         temp += stoi(tmp);
+                        tmp = "";
                     }
                 }
 
                 temp /= 3;
 
-            } else if(!strcmp(topic, (char*) "ARSLAB/Data/Hum")) {
+            }
+            if(!strcmp(topic, (char*) "ARSLAB/Data/Hum")) {
 
-                string tmp = " ";
+                string tmp = "";
                 hum = 0;
 
-                for(int i = 0; i < message.length(); i++) {
+                for(int i = 0; i < strlen(message); i++) {
                     if(message[i] != ',') {
                         tmp += message[i];
                     } else if(message[i] == ',') {
                         hum += stoi(tmp);
+                        tmp = "";
                     }
                 }
 
                 hum /= 3;
-                printf("Hum: %d\r\n", hum);
                 
-            } else if(!strcmp(topic, (char*) "ARSLAB/Data/CO")) {
+            }
+            
+            if(!strcmp(topic, (char*) "ARSLAB/Data/CO")) {
 
-                string tmp = " ";
+                string tmp = "";
                 co = 0;
 
-                for(int i = 0; i < message.length(); i++) {
+                for(int i = 0; i < strlen(message); i++) {
                     if(message[i] != ',') {
                         tmp += message[i];
                     } else if(message[i] == ',') {
                         co += stoi(tmp);
+                        tmp = "";
                     }
                 }
 
@@ -102,6 +111,7 @@ int main() {
             sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO\":%d}", temp, hum, co);
 
             client.publish("ARSLAB/Data/Fused", buff);
+
         }
 
         if(button) {

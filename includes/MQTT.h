@@ -6,6 +6,7 @@
 #include "SocketAddress.h"
 #include "TCPSocket.h"
 #include "mbed.h"
+#include <cstdint>
 
 #define MQTTCONNECT     0x10    // Client request to connect to Server
 #define MQTTCONNACK     0x20    // Connect Acknowledgment
@@ -25,6 +26,7 @@
 
 class MQTTclient {
     private:
+    uint32_t timeOut;
     bool _connect_status;
     NetworkInterface *_interface;
     TCPSocket _socket;
@@ -53,6 +55,7 @@ class MQTTclient {
     bool publish(const char* , const char*);
     bool subscribe(const char*);
     uint32_t ping();
+    uint32_t lastActivity();
     bool disconnect();
 };
 

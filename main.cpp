@@ -41,7 +41,7 @@ int main() {
     char topic[128];
     string message;
 
-    int temp, hum, co2;
+    int temp, hum, co;
 
     while (true) {
 
@@ -80,25 +80,25 @@ int main() {
 
                 hum /= 3;
                 
-            } else if(!strcmp(topic, (char*) "ARSLAB/Data/CO2")) {
+            } else if(!strcmp(topic, (char*) "ARSLAB/Data/CO")) {
 
                 string tmp = " ";
-                co2 = 0;
+                co = 0;
 
                 for(int i = 0; i < message.length(); i++) {
                     if(message[i] != ',') {
                         tmp += message[i];
                     } else if(message[i] == ',') {
-                        co2 += stoi(tmp);
+                        co += stoi(tmp);
                     }
                 }
 
-                co2 /= 3;
+                co /= 3;
                 
             }
 
             char buff[64];
-            sprintf(buff, "{\"temp\":%d, \"hum\":%d, \"CO2\":%d}", temp, hum, co2);
+            sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO\":%d}", temp, hum, co);
 
             client.publish("ARSLAB/Data/Fused", buff);
         }

@@ -1,4 +1,5 @@
 #include "MQTTDriver.h"
+#include "us_ticker_api.h"
 #include <cstring>
 #include <string>
 // main() runs in its own thread in the OS
@@ -43,6 +44,7 @@ int main() {
     char message[128];
 
     int temp, hum, co;
+    char buff[64];
 
     while (true) {
 
@@ -107,13 +109,16 @@ int main() {
                 
             }
 
-            char buff[64];
             sprintf(buff, "{\"Temp\":%d, \"Hum\":%d, \"CO\":%d}", temp, hum, co);
 
             client.publish("ARSLAB/Data/Fused", buff);
 
         }
 
+        if((us_ticker_read()/1000) - startTime > 1000) {
+            client.publish("ARSLAB/Data/Fused", buff);;
+            startTime = us_ticker_read()/1000;
+        }
         if(button) {
             break;
         }

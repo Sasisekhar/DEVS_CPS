@@ -37,7 +37,7 @@ int main() {
 
     while (true) {
 
-        if((us_ticker_read()/1000) -  startTime > 30000) {
+        if((us_ticker_read()/1000) -  startTime > 1000) {
             int temp = rand()%50;
             int hum = rand()%100;
             int co2 = rand()%5000;

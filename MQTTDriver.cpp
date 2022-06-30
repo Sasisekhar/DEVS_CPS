@@ -30,10 +30,12 @@ bool MQTTDriver::init() {
     }
 
     SocketAddress address;
-    global::_ESPclient.gethostbyname("broker.hivemq.com", &address);
-    // global::_ESPclient.gethostbyname("mqtt.flespi.io", &address);
+    // global::_ESPclient.gethostbyname("broker.emqx.io", &address);
+    // global::_ESPclient.gethostbyname("test.mosquitto.org", &address);
+    // global::_ESPclient.gethostbyname("broker.mqttdashboard.com", &address);
+    global::_ESPclient.gethostbyname("mqtt.flespi.io", &address);
     // address.set_ip_address("134.117.52.253\0");  //My laptop
-    // address.set_ip_address("172.17.21.68\0");  //My laptop
+    // address.set_ip_address("192.168.69.46\0");  //My laptop
     // address.set_ip_address("134.117.52.231\0");     //My workstation
     address.set_port(1883);
 
@@ -43,7 +45,7 @@ bool MQTTDriver::init() {
 }
 
 bool MQTTDriver::connect(const char* clientID) {
-    return _client.connect(clientID);
+    return _client.connect(clientID, "qzAGoOCKkl8cXuw8Y4qDCeWExt34ZBLf09JcMaMWjJY61i5QdljDp57Mn1Fcqgfg");
 }
 
 bool MQTTDriver::publish(const char* topic, char* message) {

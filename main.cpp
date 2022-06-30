@@ -38,19 +38,9 @@ int main() {
         if((us_ticker_read()/1000) -  startTime > 500) {
             char buff[256];
 
-            sprintf(buff, "{\"Temp1\": %d, \"Temp2\": %d, \"Temp3\": %d}", rand()%50, rand()%50, rand()%50);
-            client.publish("ARSLAB/Data/Raw/Temp", buff);
-
-            ThisThread::sleep_for(200ms);
-
-            sprintf(buff, "{\"Hum1\": %d, \"Hum2\": %d, \"Hum3\": %d}", rand()%100, rand()%100, rand()%100);
-            client.publish("ARSLAB/Data/Raw/Hum", buff);
-
-            ThisThread::sleep_for(200ms);
-
-            sprintf(buff, "{\"CO1\": %d, \"CO2\": %d, \"CO3\": %d}", rand()%200, rand()%200,rand()%200);
-            client.publish("ARSLAB/Data/Raw/CO", buff);
-
+            sprintf(buff, "{\"Temp\":[%d, %d, %d], \"Hum\":[%d, %d, %d], \"CO\":[%d, %d, %d]}", rand()%50, rand()%50, rand()%50, rand()%100, rand()%100, rand()%100, rand()%200, rand()%200, rand()%200);
+            client.publish("ARSLAB/Data/Raw", buff);
+            
             startTime = us_ticker_read()/1000;
         }
 

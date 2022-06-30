@@ -1,4 +1,5 @@
 #include "MQTTDriver.h"
+#include "ThisThread.h"
 // main() runs in its own thread in the OS
 
 DigitalOut led1(D13);
@@ -34,12 +35,22 @@ int main() {
 
     while (true) {
 
-        if((us_ticker_read()/1000) -  startTime > 5000) {
-            char buff[128];
+        if((us_ticker_read()/1000) -  startTime > 500) {
+            char buff[256];
 
-            sprintf(buff, "{\"Temp\": {\"Temp1\": %d, \"Temp2\": %d, \"Temp3\": %d}, \"Hum\": {\"Hum1\": %d, \"Hum2\": %d, \"Hum3\": %d}, \"CO\": {\"CO1\": %d, \"CO2\": %d, \"CO3\": %d}}", rand()%50, rand()%50, rand()%50, rand()%100, rand()%100, rand()%100, rand()%5000, rand()%5000,rand()%5000);
+            sprintf(buff, "{\"Temp1\": %d, \"Temp2\": %d, \"Temp3\": %d}", rand()%50, rand()%50, rand()%50);
+            client.publish("ARSLAB/Data/Raw/Temp", buff);
 
-            client.publish("ARSLAB/Data/Raw", buff);
+            ThisThread::sleep_for(200ms);
+
+            sprintf(buff, "{\"Hum1\": %d, \"Hum2\": %d, \"Hum3\": %d}", rand()%100, rand()%100, rand()%100);
+            client.publish("ARSLAB/Data/Raw/Hum", buff);
+
+            ThisThread::sleep_for(200ms);
+
+            sprintf(buff, "{\"CO1\": %d, \"CO2\": %d, \"CO3\": %d}", rand()%200, rand()%200,rand()%200);
+            client.publish("ARSLAB/Data/Raw/CO", buff);
+
             startTime = us_ticker_read()/1000;
         }
 

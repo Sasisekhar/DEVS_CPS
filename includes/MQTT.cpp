@@ -231,7 +231,7 @@ bool MQTTclient::publish(const char* topic, const char* message) {
     //uint8_t buffer[] = {0x30, 0x12, 0x00, 0x04, 'T', 'E', 'S', 'T', 0x00, 0x0A, 'S', 'A', 'S', 'I', 'S', 'E', 'K', 'H', 'A', 'R'};
 
     if(_connect_status) {
-        uint8_t variable[128];
+        uint8_t variable[256];
 
         uint8_t index = 0;
 
@@ -248,7 +248,7 @@ bool MQTTclient::publish(const char* topic, const char* message) {
 
         uint8_t fixed[] = {MQTTPUBLISH, index};
 
-        uint8_t buffer[128];
+        uint8_t buffer[512];
 
         for(int i = 0; i < index + 2; i++) {
             if(i < 2) {
@@ -259,8 +259,13 @@ bool MQTTclient::publish(const char* topic, const char* message) {
         }
 
         nsapi_size_t bytes_to_send = index + 2;
-        // printf("Size of packet is: %d\n", bytes_to_send);
+        // printf("Size of packet is: %d\r\n", bytes_to_send);
 
+        // for(int i = 0; i < bytes_to_send; i++) {
+        //     printf("0x%02X, ", (unsigned int) buffer[i]);
+        // }
+        // printf("\n");
+        
         _result = _socket.send(buffer, bytes_to_send);
 
         if(_result < 0) {
